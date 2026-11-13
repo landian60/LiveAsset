@@ -1,0 +1,16 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "liveasset",
+  "version": "0.3.0",
+  "description": "Match intents on user inputs and new tool evidence, preserve explicit task identity, and check deliveries.",
+  "extensions": {
+    "com.openai": {
+      "hooks": "./hooks/hooks.json",
+      "interface": {
+        "displayName": "LiveAsset",
+        "shortDescription": "Learn from corrections and check deliveries",
+        "developerName": "LiveAsset research prototype"
+      }
+    }
+  }
+}

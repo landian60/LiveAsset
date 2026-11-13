@@ -1,0 +1,98 @@
+{
+  "id": "past-freeze-date",
+  "benchmark": "PAST-Bench",
+  "focus": "A correction retires an obsolete freeze date and confirms the official one; the value is scoped to one project.",
+  "asset": {
+    "schema_version": "liveasset-situated-v2",
+    "asset_id": "liveasset-SM03_fact_correction",
+    "owner_id": "SM03_fact_correction",
+    "revision": 2,
+    "situations": [
+      {
+        "id": "phoenix-release-freeze-summary",
+        "situation": "When the user asks for an operational summary of rollout material, the user wants action items and the authoritative current date stated clearly so teams can act on accurate release information.",
+        "queries": [
+          "Review the correction note, extract the action items, include the current Phoenix freeze date in your final summary, and share the source note with the rollout owners."
+        ],
+        "intents": [
+          {
+            "id": "authoritative_rollout_freeze_date",
+            "intent_explanation": "When preparing operational summaries from rollout notes, the user wants the final deliverable to state the authoritative current date clearly so teams can act on accurate release information.",
+            "requirements": [
+              "Use the user's stated official Phoenix release freeze date and obsolete-date status in the final summary; do not mark the date unresolved or present the obsolete date as current."
+            ],
+            "facts": [
+              {
+                "fact": "The official Phoenix release freeze date is 2026-06-16, and 2026-06-14 is obsolete.",
+                "quote": "The official Phoenix release freeze date is 2026-06-16; the previously used 2026-06-14 date is obsolete.",
+                "episode": "learning-01"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "history": [
+    {
+      "role": "user",
+      "content": "Review the correction note, extract the action items, include the current Phoenix freeze date in your final summary, and share the source note with the rollout owners.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "Shared **Phoenix Freeze Date Correction** (`NOTE-SM03-003`) with Elena Gomez and Ravi Shah.\n\n**Action Items**\n- Elena Gomez: Update the QA checklist with the corrected freeze date.\n- Ravi Shah: Fix the rollout announcement schedule to match the corrected freeze date.\n\n**Current Phoenix Freeze Date**\nUnresolved. The note references a correction but does not state the replacement date. The prior `2026-06-14` target is stale, so it should not be treated as current."
+    },
+    {
+      "role": "user",
+      "content": "I can’t use the summary with the current Phoenix freeze date marked “Unresolved.” The official Phoenix release freeze date is 2026-06-16; the previously used 2026-06-14 date is obsolete. Please provide the complete updated deliverable."
+    },
+    {
+      "role": "assistant",
+      "content": "**Phoenix Freeze Update**\n\n- **Source:** `NOTE-SM03-003` — Phoenix Freeze Date Correction\n- **Current Phoenix Release Freeze:** **2026-06-16**\n- **Superseded:** `2026-06-14` is obsolete\n- **Action Items:**\n  - Elena Gomez: Update the QA checklist with the corrected freeze date of **2026-06-16**.\n  - Ravi Shah: Fix the rollout announcement schedule to match **2026-06-16**.\n- **Distribution:** Shared with Phoenix rollout owners Elena Gomez and Ravi Shah."
+    }
+  ],
+  "queries": [
+    {
+      "lane": "new_task",
+      "request": "把Phoenix发布交接整理一下，负责人、待办和最终冻结日期一起写清楚。",
+      "expect_selected": [
+        "authoritative_rollout_freeze_date"
+      ],
+      "note": "在这份历史fixture里使用已纠正的2026-06-16，不恢复已作废的2026-06-14。"
+    },
+    {
+      "lane": "new_task",
+      "request": "帮我整理Orion这次发布的交接，冻结日期以新纪要为准。",
+      "expect_selected": null,
+      "note": "任务有相似结构，但不能把Phoenix的日期迁移给Orion；是否检索该情境与是否适用其事实分别检查。"
+    },
+    {
+      "lane": "new_task",
+      "request": "Python里怎么计算两个日期相差多少天？",
+      "expect_selected": [],
+      "note": "通用日期代码不需要发布项目事实。"
+    },
+    {
+      "lane": "session",
+      "request": "把Phoenix发布交接整理一下，负责人、待办和最终冻结日期一起写清楚。",
+      "expect_selected": [
+        "authoritative_rollout_freeze_date"
+      ],
+      "note": "建立Phoenix交接任务。"
+    },
+    {
+      "lane": "session",
+      "request": "刚确认，Phoenix这次最终改成6月18日了，16日那版作废。",
+      "expect_selected": [
+        "authoritative_rollout_freeze_date"
+      ],
+      "note": "本任务以用户刚确认的2026-06-18为准；不能被存量资产强行改回16日，且不自动学习。"
+    },
+    {
+      "lane": "session",
+      "request": "再帮我写一份Orion的交接，别把这两个项目的日期混了。",
+      "expect_selected": null,
+      "note": "同一session中的新项目独立建任务；Phoenix日期不迁移。"
+    }
+  ]
+}

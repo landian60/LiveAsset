@@ -1,0 +1,162 @@
+{
+  "id": "pi-financier-003",
+  "benchmark": "π-Bench",
+  "focus": "Four deliveries add comparison dimensions and a Meta Review module; the last correction asks for one consolidated meeting-ready report.",
+  "asset": {
+    "schema_version": "liveasset-situated-v2",
+    "asset_id": "liveasset-Financier_task_003",
+    "owner_id": "Financier_task_003",
+    "revision": 4,
+    "situations": [
+      {
+        "id": "huadong-pd-gray-release-model-review",
+        "situation": "When the user asks for a model performance evaluation and rollout recommendation, the user wants observed performance, trade-offs, and explicit uncertainty consolidated into a meeting-ready report to support a bounded decision, because metrics alone or piecemeal follow-ups leave decision-makers without a complete basis.",
+        "queries": [
+          "Please use the local file Model_Performance_Report.md to evaluate the actual performance of the current Huadong Operating Loan PD model during the gray-release stage"
+        ],
+        "intents": [
+          {
+            "id": "meeting-ready-model-route-comparison",
+            "intent_explanation": "For gray-release model evaluations and meeting recommendations, the user wants observed performance, model trade-offs, and explicit uncertainty to support a bounded route decision. The complete assessment should be consolidated in one meeting-ready report, since a metrics-only comparison or an add-on that depends on earlier replies leaves the discussion incomplete.",
+            "requirements": [
+              "Compare the current Champion with the backup candidate using observed performance and the dimensions listed in facts, and present the comparison in tables suitable for meeting discussion.",
+              "Use the monitoring memo as evidence, distinguish proxy-label results from fully observed 12-month outcomes, and make a bounded recommendation on whether to advance the Champion route.",
+              "When the memo does not provide measured values for a requested comparison dimension, identify the assessment as qualitative rather than presenting it as an observed statistic.",
+              "Consolidate the substantive assessment into one self-contained meeting-ready report, including observed performance, comparison tables, the supported route recommendation, and the fixed Meta Review module at the end.",
+              "End the meeting-ready evaluation with a fixed Meta Review module covering key assumptions, potential biases, information gaps, and next-step due diligence and monitoring recommendations, making uncertainty behind the recommendation explicit."
+            ],
+            "facts": [
+              {
+                "fact": "The user requested comparison across these dimensions: modeling logic, interpretability, nonlinear representation capability, training efficiency, hyperparameter tuning complexity, and online maintenance/governance cost.",
+                "quote": "modeling logic, interpretability, nonlinear representation capability, training efficiency, hyperparameter tuning complexity, and online maintenance/governance cost",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants observed performance included alongside the model comparison.",
+                "quote": "alongside the observed performance.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants a recommendation suitable for meeting discussion.",
+                "quote": "provide a recommendation suitable for discussion in the meeting.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The source memo identifies A5 as Champion, A3 as Shadow Challenger, and A1 as Replay Baseline.",
+                "quote": "- Current Champion: A5\n- Shadow Challenger: A3\n- Replay Baseline: A1",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The source memo defines A1 as WOE/GLM logistic regression, A3 as a histogram-splitting boosted-tree route with leaf-wise growth, and A5 as classic gradient-boosted trees using gbtree and binary logistic objective.",
+                "quote": "- A1: Binning + Logistic Regression (WOE / GLM binary classification)\n- A3: Boosted-tree route based on histogram splitting and leaf-wise growth\n- A5: Classic gradient-boosted-tree route, implemented in engineering with `booster=gbtree` and `objective=binary:logistic`",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The overall gray-release metrics are A5: AUC 0.796, KS 0.401, Brier 0.053, PSI 0.16, relative training time 2.3, explanation latency 4.8 seconds; A3: 0.791, 0.395, 0.054, 0.14, 1.7, 4.1 seconds; and A1: 0.742, 0.316, 0.061, 0.09, 1.0, 0.2 seconds.",
+                "quote": "| A5 | Champion | 0.796 | 0.401 | 0.053 | 0.16 | 2.3 | 4.8 sec |\n| A3 | Challenger | 0.791 | 0.395 | 0.054 | 0.14 | 1.7 | 4.1 sec |\n| A1 | Replay Baseline | 0.742 | 0.316 | 0.061 | 0.09 | 1.0 | 0.2 sec |",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The memo notes that full 12-month bad-outcome labels are not yet fully observed and some risk assessments rely on early proxy indicators.",
+                "quote": "Since full 12-month bad-outcome labels have not yet been fully observed, some risk assessments rely on early risk proxy indicators.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants a fixed final module titled Meta Review covering key assumptions, potential biases, information gaps, next-step due diligence, and monitoring recommendations, with recommendation uncertainties explicit for the meeting.",
+                "quote": "Please add a fixed **Meta Review** module at the end, covering key assumptions, potential biases, information gaps, and next-step due diligence and monitoring recommendations. The tables make the trade-offs clearer, but I also need the uncertainties behind the recommendation made explicit for the meeting.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The consolidated report should include observed performance, comparison tables, the supported route recommendation, and the fixed Meta Review module at the end.",
+                "quote": "including the observed performance, comparison tables, supported route recommendation, and the fixed Meta Review module at the end.",
+                "episode": "learning-01"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "history": [
+    {
+      "role": "user",
+      "content": "Please use the local file Model_Performance_Report.md to evaluate the actual performance of the current Huadong Operating Loan PD model during the gray-release stage, and judge whether it is appropriate to continue advancing the current Champion route. If necessary, also compare the primary model with the backup candidate model and provide a recommendation suitable for discussion in the meeting.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "The gray-release evidence supports **continuing A5 as Champion for regular industries**, but does not support advancing it unchanged across all industries.\n\n- **Overall:** A5 leads A3 on AUC (0.796 vs. 0.791), KS (0.401 vs. 0.395), and Brier score (0.053 vs. 0.054). Its overall PSI is still below the formal 0.20 trigger at 0.16.\n- **Regular industries:** A5 is clearly preferable: AUC 0.804 vs. 0.798 and KS 0.409 vs. 0.401, with PSI still controlled at 0.13.\n- **High-volatility industries:** A5 loses to A3: A3 has higher AUC and KS (0.776/0.386 vs. 0.772/0.382), and materially lower PSI (0.17 vs. 0.21). A5 has already exceeded the internal 0.20 attention line here.\n- **Cost and governance:** A5 takes about 35% longer to train than A3 and has 4.8-second explanation latency, close to the 5-second trigger. Its 7.6% supplemental-explanation rate is also close to the 8% trigger.\n\nThe appropriate meeting recommendation is:\n\n1. **Regular industries:** Continue A5 as Champion with S2. This is supported by the observed discrimination and business value.\n2. **High-volatility industries:** Do not continue A5+S2 unchanged. Use S3 at minimum; recommend a controlled move to **A3+S3** as the conservative segment route because A3 is currently more stable and easier to explain from a governance perspective.\n3. **Keep A5 as the overall primary route and A3 as an actively maintained backup/segment-specific route.** The report does not provide direct A3+S3 return simulation, so the switch should first run through replay or a staged pilot.\n4. **Formalize monitoring triggers** and add a segment-level trigger for high-volatility PSI above 0.20, rather than waiting for the proposed 0.22 threshold. Reassess after two consecutive monthly windows.\n5. Treat this as a conditional gray-release decision: the observation period is short and relies partly on early risk proxies rather than complete 12-month outcomes.\n\nA meeting-ready conclusion would be: **“Approve continued advancement of A5+S2 for regular industries. For high-volatility industries, adopt a conservative A3+S3 pilot or fallback, with A5+S3 as the interim option if immediate route replacement is operationally difficult. Do not approve unrestricted advancement of A5 across all segments.”**\n\nSource: [Model_Performance_Report.md](/workspace/Model_Performance_Report.md:31)."
+    },
+    {
+      "role": "user",
+      "content": "The A5/A3 comparison is still mostly a list of performance metrics, so it doesn’t give me enough to discuss the trade-offs in the meeting. Please put the model comparison into tables covering modeling logic, interpretability, nonlinear representation capability, training efficiency, hyperparameter tuning complexity, and online maintenance/governance cost, alongside the observed performance."
+    },
+    {
+      "role": "assistant",
+      "content": "The useful meeting distinction is: **A5 buys a small performance advantage overall, while A3 offers better stability and lower operating burden in the segment where A5 is weakest.** A1 is the governance reference, not a credible production replacement.\n\n**Observed gray-release performance** (`n = 32,400`; proxy-label results):\n\n| Dimension | A1: GLM baseline | A3: boosted-tree challenger | A5: current Champion |\n|---|---:|---:|---:|\n| Overall AUC | 0.742 | 0.791 | **0.796** |\n| Overall KS | 0.316 | 0.395 | **0.401** |\n| Overall Brier | 0.061 | 0.054 | **0.053** |\n| Overall PSI | **0.09** | 0.14 | 0.16 |\n| Relative training time | **1.0** | 1.7 | 2.3 |\n| Explanation latency | **0.2 sec** | 4.1 sec | 4.8 sec |\n| Regular-industry AUC / KS / PSI | 0.748 / 0.321 / 0.08 | 0.798 / 0.401 / 0.12 | **0.804 / 0.409 / 0.13** |\n| High-volatility AUC / KS / PSI | 0.731 / 0.301 / 0.10 | **0.776 / 0.386 / 0.17** | 0.772 / 0.382 / **0.21** |\n\nA5’s overall lead over A3 is narrow: +0.005 AUC, +0.006 KS, and −0.001 Brier. In high-volatility industries, the ranking reverses and A3 has 0.04 lower PSI.\n\n**Model-design and operating trade-offs**\n\n| Discussion dimension | A1: GLM baseline | A3: boosted-tree challenger | A5: current Champion |\n|---|---|---|---|\n| Modeling logic | WOE/binning plus additive logistic model; scorecard-like structure | Histogram-based boosted trees with leaf-wise growth | Classic gradient-boosted trees using `gbtree` and binary logistic loss |\n| Interpretability | **High**: bin-level effects and additive contribution are straightforward to document | Medium: tree/feature contributions are available, but interaction paths are harder to explain | Medium: explanations are generally usable, but complex cases need manual second-pass translation |\n| Nonlinear representation | Low: nonlinear effects require bins or manually designed interactions | **High**: captures nonlinearities and interactions directly | **High**: captures nonlinearities and interactions directly |\n| Training efficiency | **Best**; reference value 1.0 | Better than A5; 1.7 relative time | Worst of the three; 2.3 relative time, though still subject to the two-hour rerun limit |\n| Hyperparameter-tuning complexity* | Low to medium: binning, regularization, and variable-selection choices | High: tree growth, leaf structure, learning rate, number of rounds, and regularization | High: boosting depth, rounds, learning rate, subsampling, regularization, and related choices |\n| Online maintenance / drift pressure | **Lowest**: PSI 0.09; field changes are easier to audit against a simpler structure | Medium-high: tree behavior is more sensitive to feature-distribution and definition changes; PSI 0.14 overall and 0.17 in high-volatility industries | **Highest of the three in current use**: PSI 0.16 overall and 0.21 in high-volatility industries; relationship-network freshness issues add risk |\n| Governance and explanation cost | **Lowest**; 0.2-second explanations and retained as audit reference | Lower than A5 in the proposed high-volatility conservative plan; 4.1-second explanations | Higher: 4.8-second explanations and 7.6% of manual-review cases require supplemental explanation |\n| Best role | Explainability, audit, and replay benchmark | Segment-specific fallback or conservative route | Primary route where performance advantage is persistent and drift is controlled |\n\n\\*The report does not provide tuning-hours or search-volume measurements, so this row is an architecture-based assessment rather than a measured operating statistic.\n\nThe threshold trade-off is also material:\n\n| Plan | Approval rate | Manual review | Early risk proxy | Estimated risk-adjusted return |\n|---|---:|---:|---:|---:|\n| S2 | 54.9% | 22.8% | 3.9% | +7.1% |\n| S3 | 48.1% | 24.7% | **3.2%** | +6.7% |\n\nS3 reduces the early risk proxy by 0.7 percentage points, but lowers approval by 6.8 points and estimated return by 0.4 points. That supports S2 for regular industries and a conservative setup for high-volatility industries.\n\nThe meeting recommendation should therefore be:\n\n- **Continue A5+S2 for regular industries.** It has the best observed discrimination and the report describes its drift there as controlled.\n- **Do not advance A5 unchanged in high-volatility industries.** A5’s PSI is already above the 0.20 attention line, while A3 is slightly more discriminative and more stable.\n- **Use A3+S3 as a staged conservative route for high-volatility industries**, subject to replay/pilot validation. The report’s S3 simulation was run under the current Champion setup, so it does not yet prove the financial outcome of A3+S3.\n- **Retain A1 for audit and explanation benchmarking**, rather than returning it to the primary route.\n- Formalize segment-level monitoring, including the current high-volatility PSI attention line, instead of relying only on overall A5 thresholds.\n\nThis supports **conditional advancement of A5**, rather than unrestricted advancement across every industry. Source: [Model_Performance_Report.md](/workspace/Model_Performance_Report.md:23)."
+    },
+    {
+      "role": "user",
+      "content": "Please add a fixed **Meta Review** module at the end, covering key assumptions, potential biases, information gaps, and next-step due diligence and monitoring recommendations. The tables make the trade-offs clearer, but I also need the uncertainties behind the recommendation made explicit for the meeting."
+    },
+    {
+      "role": "assistant",
+      "content": "Add the following fixed section after the recommendation:\n\n## Meta Review\n\nThis module records the uncertainty behind the route recommendation and should be reviewed alongside every Champion/Challenger decision.\n\n| Area | Key point | Effect on the current recommendation |\n|---|---|---|\n| Key assumptions | The three routes were compared using unified samples, proxy labels, and feature-snapshot timing. The reported metrics are treated as directionally comparable. | Supports retaining A5 for regular industries, but does not establish long-term superiority. |\n| Key assumptions | Architecture-based judgments about tuning and maintenance are qualitative; the report does not provide actual tuning hours or maintenance tickets. | These factors should influence governance planning, not be treated as measured cost savings. |\n| Potential bias | The observation window is short and full 12-month bad-outcome labels are incomplete. Early proxy behavior may differ from mature default performance. | Confidence is higher in the near-term monitoring decision than in a final model approval. |\n| Potential bias | Segment sample counts and confidence intervals are not reported. The small A5/A3 differences may not be statistically significant. | The high-volatility route decision should be staged and validated rather than treated as a permanent replacement. |\n| Potential bias | The report does not document reject inference, approval-selection effects, or whether the observed sample represents the future production mix. | Approval-rate, risk, and return comparisons may not generalize to the full applicant population. |\n| Potential bias | Relationship-network feature freshness problems may affect high-volatility segments unevenly. | A5’s higher PSI may reflect both model behavior and upstream data-quality conditions; root cause must be separated before attribution. |\n| Information gap | The S2/S3 simulation was run under the current Champion setup. Direct A3+S3 risk, approval, manual-review, and return results are unavailable. | A3+S3 should be approved as a pilot or fallback route, not presented as proven to maximize returns. |\n| Information gap | Calibration by segment, matured bad rates, confidence intervals, and stability by cohort are not provided. | AUC and KS alone are insufficient for final PD model approval. |\n| Information gap | A3 explanation-exception rates, actual rerun wall-clock times, and quarterly replay results are not reported. | The governance advantage of A3 remains plausible but incomplete. |\n| Information gap | The effect of upstream field-definition changes and freshness failures has not been quantified. | Data-lineage controls are a prerequisite for continued tree-model deployment. |\n\n### Required due diligence before finalizing the route\n\n1. Run a matured-label backtest with segment-level AUC, KS, Brier/calibration, bad rates, and bootstrap confidence intervals.\n2. Replay **A5+S2**, **A5+S3**, and **A3+S3** on the same high-volatility population, reporting approval, manual-review load, early and matured risk, and risk-adjusted return.\n3. Reconcile relationship-network feature freshness, upstream field definitions, missingness, and snapshot timing before interpreting PSI differences.\n4. Measure actual training wall-clock time, tuning effort, explanation-exception rates, manual translation time, and quarterly replay success for A3 and A5.\n5. Check whether threshold changes alter applicant mix, reject inference, or portfolio composition in ways that bias the return comparison.\n6. Confirm that high-volatility segment volumes are large enough for stable monthly monitoring.\n\n### Ongoing monitoring recommendation\n\n- Monitor overall and segment PSI monthly, with a specific high-volatility attention threshold at 0.20.\n- Formalize review triggers for overall PSI ≥ 0.20 for two consecutive months, A5 AUC < 0.790, A5 KS < 0.390, or explanation latency >5 seconds together with exception rate >8%.\n- Escalate high-volatility cases at PSI ≥ 0.22 when the manual-review pool also expands abnormally; investigate at 0.20 rather than waiting for escalation.\n- Track approval rate, manual-review share, early risk proxies, matured bad rates as they become available, calibration, and explanation latency by route and segment.\n- Require versioned feature definitions, freshness checks, and quarterly auditable replay.\n- Reassess the A5-versus-A3 route decision after two additional monthly windows and after sufficient 12-month outcomes mature.\n\nThe resulting confidence statement for the meeting is: **confidence is sufficient to continue A5+S2 in regular industries; confidence is insufficient to approve unrestricted A5 advancement in high-volatility industries. A3+S3 is a justified staged conservative option, with its final adoption contingent on direct replay and economic validation.**\n\nSource: [Model_Performance_Report.md](/workspace/Model_Performance_Report.md:1)."
+    },
+    {
+      "role": "user",
+      "content": "This only gives me the Meta Review add-on; the actual gray-release assessment and substantive A5/A3 comparison are still scattered across earlier replies. Please consolidate everything into one meeting-ready report, including the observed performance, comparison tables, supported route recommendation, and the fixed Meta Review module at the end."
+    },
+    {
+      "role": "assistant",
+      "content": "Consolidated the assessment into a single meeting-ready report:\n\n[Huadong_Operating_Loan_PD_Gray_Release_Meeting_Report.md](/workspace/Huadong_Operating_Loan_PD_Gray_Release_Meeting_Report.md)\n\nIt includes:\n\n- Executive decision and supported route recommendation\n- Overall and segment-level gray-release performance\n- A5/A3/A1 comparison across modeling logic, interpretability, nonlinear capability, training, tuning, and governance cost\n- Threshold-plan implications\n- Monitoring and control plan\n- Fixed **Meta Review** covering assumptions, biases, information gaps, due diligence, and uncertainty limits"
+    }
+  ],
+  "queries": [
+    {
+      "lane": "new_task",
+      "request": "看一下Model_Performance_Report.md，A5这条路线还要不要继续往前推？帮我整理一份会上能讨论的评审意见。",
+      "expect_selected": [
+        "meeting-ready-model-route-comparison"
+      ],
+      "note": "选中报告评审情境；复用比较与完整交付要求。"
+    },
+    {
+      "lane": "new_task",
+      "request": "我又放了一份新的灰度监测报告，帮我比较这次的主模型和备选方案，准备明天的评审材料。",
+      "expect_selected": [
+        "meeting-ready-model-route-comparison"
+      ],
+      "note": "可以迁移比较结构；必须读取新报告，不沿用旧A5/A3数值。"
+    },
+    {
+      "lane": "new_task",
+      "request": "这段代码里的Champion变量为什么是None？先帮我解释报错。",
+      "expect_selected": [],
+      "note": "同名词不应触发模型评审报告规范。"
+    },
+    {
+      "lane": "session",
+      "request": "看一下Model_Performance_Report.md，A5这条路线还要不要继续往前推？帮我整理一份会上能讨论的评审意见。",
+      "expect_selected": [
+        "meeting-ready-model-route-comparison"
+      ],
+      "note": "建立独立评审任务。"
+    },
+    {
+      "lane": "session",
+      "request": "表里不能只有AUC这些数，我更想知道两条路线后面哪条好维护。",
+      "expect_selected": [
+        "meeting-ready-model-route-comparison"
+      ],
+      "note": "延续任务；结合已有比较维度解释取舍，不能捏造未测指标。"
+    },
+    {
+      "lane": "session",
+      "request": "可以，把刚才补的也并进去，给我一份完整稿，别让我来回翻。",
+      "expect_selected": [
+        "meeting-ready-model-route-comparison"
+      ],
+      "note": "延续同一任务，完整交付包含先前已要求的比较和Meta Review。"
+    }
+  ]
+}

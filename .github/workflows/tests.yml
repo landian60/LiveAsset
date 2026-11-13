@@ -1,0 +1,26 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.11'}
+          - {os: ubuntu-latest, python: '3.12'}
+          - {os: macos-latest, python: '3.12'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install '.[mcp]'
+      - run: python tools/sync_liveasset_vendor.py --check
+      - run: python -m unittest discover -s tests -v
+      - run: python -m unittest discover -s integrations/codex-liveasset -v
+      - name: Offline examples
+        run: |
+          python examples/learn_from_correction.py
+          python examples/switch_situations.py
+          python examples/quickstart.py
+          python examples/run_benchmark_cases.py

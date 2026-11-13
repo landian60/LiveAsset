@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "purpose": "Anonymous engineering cases with hand-authored assets.",
+  "cases": [
+    {
+      "id": "evaluation-continuation",
+      "kind": "derived_composite",
+      "description": "由评估工作流改写；叠加原聊天、进度追问、新聊天接续和周报新目标。",
+      "events": [
+        {
+          "id": "start",
+          "request": "在远程运行评估集A，本次只考虑40题。区分API失败和模型失败；有产物但评分异常时先查judge读到的文件。",
+          "session_id": "eval-a",
+          "event_id": "turn-1",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "status",
+          "request": "进度怎么样？",
+          "session_id": "eval-a",
+          "event_id": "turn-2",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "reused",
+            "same_task_as": "start",
+            "calls": 0
+          }
+        },
+        {
+          "id": "resume",
+          "request": "继续[此前运行](codex://threads/eval-a)，沿用原来40题的范围。",
+          "session_id": "eval-b",
+          "event_id": "turn-3",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "rerouted",
+            "same_task_as": "start"
+          }
+        },
+        {
+          "id": "report",
+          "request": "现在另写一段本周技术周报，用评估工作作为素材，不再继续运行或评分。",
+          "session_id": "eval-b",
+          "event_id": "turn-4",
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "new_task",
+            "different_task_from": "start"
+          }
+        }
+      ]
+    },
+    {
+      "id": "layout-correction",
+      "kind": "derived_composite",
+      "description": "远程各自仓库纠正；助手的错误总仓库建议作为噪声，不成为长期资产。",
+      "events": [
+        {
+          "id": "start",
+          "request": "整理远程评估项目的代码、配置和结果目录。",
+          "session_id": "layout-a",
+          "event_id": "turn-1",
+          "expect": {
+            "selected": [
+              "repository-cohesion"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "correct",
+          "request": "不是放到一个总仓库。每个benchmark分别在它自己的实际代码仓库内，配置、执行目录和结果放在一起，保留旧路径兼容。",
+          "session_id": "layout-a",
+          "event_id": "turn-2",
+          "context": {
+            "dialogue": [
+              {
+                "role": "assistant",
+                "content": "我准备把所有项目合并到本地一个总仓库。"
+              }
+            ]
+          },
+          "expect": {
+            "selected": [
+              "repository-cohesion"
+            ],
+            "action": "rerouted",
+            "same_task_as": "start"
+          }
+        },
+        {
+          "id": "continue",
+          "request": "继续",
+          "session_id": "layout-b",
+          "task_from": "correct",
+          "event_id": "turn-3",
+          "expect": {
+            "selected": [
+              "repository-cohesion"
+            ],
+            "action": "reused",
+            "same_task_as": "start",
+            "calls": 0,
+            "context_contains": "每个benchmark分别"
+          }
+        }
+      ]
+    },
+    {
+      "id": "reference-and-noise",
+      "kind": "derived_composite",
+      "description": "新周报只参考旧聊天；引用中的错误建议不修改静态资产，随后切换到无关翻译。",
+      "events": [
+        {
+          "id": "old",
+          "request": "撰写第一周期技术周报，只写简短进展。两次复评有35/36条一致，没有独立人工真值。",
+          "session_id": "weekly-a",
+          "event_id": "turn-1",
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "new-period",
+          "request": "参考[旧周报](codex://threads/weekly-a)的格式，另写第二周期周报；旧数字不能沿用。本期完成新的样本审核。",
+          "session_id": "weekly-b",
+          "event_id": "turn-2",
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "new_task",
+            "different_task_from": "old"
+          }
+        },
+        {
+          "id": "noise",
+          "request": "有人建议把一致率直接称为准确率，这只是引用的错误建议。继续完善本期周报，仍然区分两者，没有要求你学习新的偏好。",
+          "session_id": "weekly-b",
+          "event_id": "turn-3",
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "rerouted",
+            "same_task_as": "new-period"
+          }
+        },
+        {
+          "id": "unrelated",
+          "request": "另一个独立任务：把Hello world翻译成中文，仅给译文。",
+          "session_id": "weekly-b",
+          "event_id": "turn-4",
+          "expect": {
+            "selected": [],
+            "action": "new_task",
+            "different_task_from": "new-period"
+          }
+        }
+      ]
+    },
+    {
+      "id": "context-change",
+      "kind": "synthetic",
+      "description": "执行中出现新的交付子任务，宿主报告上下文变化后重新路由。",
+      "events": [
+        {
+          "id": "start",
+          "request": "恢复远程评估集A，核对执行结果和评分输入。",
+          "session_id": "context-a",
+          "event_id": "turn-1",
+          "context": {
+            "stage": "evaluation"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "subtask",
+          "request": "继续执行原评估，同时按刚发现的要求，把结果位置整理回每个benchmark各自仓库。",
+          "session_id": "context-a",
+          "event_id": "turn-2",
+          "context": {
+            "stage": "evaluation-and-layout"
+          },
+          "reroute": true,
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "action": "rerouted",
+            "same_task_as": "start"
+          }
+        }
+      ]
+    },
+    {
+      "id": "asset-revision-and-replay",
+      "kind": "synthetic",
+      "description": "资产版本更新使绑定失效；旧事件重放使用历史快照，重复事件不回滚当前绑定。",
+      "events": [
+        {
+          "id": "start",
+          "request": "运行评估集A，核对结果和评分器。",
+          "session_id": "version-a",
+          "event_id": "turn-1",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "new_task",
+            "asset_revision": 1
+          }
+        },
+        {
+          "id": "replace",
+          "operation": "replace_asset",
+          "revision": 2,
+          "remove_situations": [
+            "evaluation"
+          ]
+        },
+        {
+          "id": "refresh",
+          "request": "继续",
+          "session_id": "version-a",
+          "event_id": "turn-2",
+          "expect": {
+            "selected": [],
+            "action": "rerouted",
+            "same_task_as": "start",
+            "asset_revision": 2
+          }
+        },
+        {
+          "id": "replay",
+          "request": "继续",
+          "session_id": "version-a",
+          "task_from": "start",
+          "event_id": "turn-1",
+          "replay": true,
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "replayed",
+            "same_task_as": "start",
+            "asset_revision": 1,
+            "calls": 0,
+            "binding_unchanged": true
+          }
+        },
+        {
+          "id": "duplicate",
+          "request": "运行评估集A，核对结果和评分器。",
+          "session_id": "version-a",
+          "event_id": "turn-1",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "asset_revision": 1,
+            "duplicate_event": true,
+            "calls": 0,
+            "binding_unchanged": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "ambiguous-chat-reference",
+      "kind": "synthetic",
+      "description": "同一聊天已包含多个任务时，引用该聊天不能自动绑定最后一个任务。",
+      "events": [
+        {
+          "id": "first",
+          "request": "运行评估集A并核对评分。",
+          "session_id": "multi-a",
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "second",
+          "request": "另开任务，撰写第二周期技术周报。",
+          "session_id": "multi-a",
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "new_task",
+            "different_task_from": "first"
+          }
+        },
+        {
+          "id": "reference",
+          "request": "继续[此前聊天](codex://threads/multi-a)中的那项工作。",
+          "session_id": "multi-b",
+          "expect": {
+            "action": "new_task",
+            "different_task_from": "second",
+            "source": "unresolved_reference"
+          }
+        }
+      ]
+    }
+  ]
+}

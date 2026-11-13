@@ -1,0 +1,241 @@
+{
+  "id": "skillevol-comparison",
+  "benchmark": "SkillEvolBench",
+  "focus": "T1-T3 cover a runnable generator that must reproduce the saved artifact, and sources that directly support each dimension.",
+  "asset": {
+    "schema_version": "liveasset-situated-v2",
+    "asset_id": "liveasset-E5-LS2",
+    "owner_id": "E5-LS2",
+    "revision": 7,
+    "situations": [
+      {
+        "id": "crm-comparison-table",
+        "situation": "When the user asks for a source-grounded comparison table, the user wants complete side-by-side results backed by evidence relevant to each dimension, with unsupported results marked unavailable and a runnable generator that preserves the saved deliverable, because missing evidence should not skew the comparison and rerunning it should retain the results.",
+        "queries": [
+          "# Task: Build a multi-dimension comparison table",
+          "# Task: Compare platforms without turning missing data into zeros"
+        ],
+        "intents": [
+          {
+            "id": "reproducible-crm-comparisons",
+            "intent_explanation": "For source-grounded platform comparison tables produced as saved data and runnable generators, the user wants complete side-by-side results supported by evidence that substantively matches each compared dimension. Related context must not hide missing evidence: unsupported results should remain explicitly unavailable so evidence gaps do not skew the comparison, and rerunning the producer should preserve the deliverable.",
+            "requirements": [
+              "Cover every required comparison dimension with source-grounded side-by-side results using the fields described in facts; when adequate evidence for a product is missing, leave its result unavailable and explain the gap rather than treating adjacent context as support.",
+              "Assess whether each source substantively supports the specific comparison dimension before using it as supporting evidence; keep related but non-supporting context separate and preserve the unavailable result when direct support is absent.",
+              "Keep the runnable comparison producer aligned with the saved artifact so rerunning preserves the complete comparison.",
+              "Regenerate and check the comparison artifact against the requested schema and source evidence before delivery.",
+              "Update the centralized missing-value policy module named in facts and ensure the generated matrix follows it.",
+              "Represent unavailable comparison dimensions explicitly as unavailable, not numeric zeroes, according to facts.",
+              "Save each comparison artifact at its task-specific output path in facts."
+            ],
+            "facts": [
+              {
+                "fact": "The comparison generator file is named `comparison_pipeline.py`.",
+                "quote": "comparison_pipeline.py",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The requested dimensions for the six-dimension CRM comparison are pricing, security, integrations, usability, support, and compliance.",
+                "quote": "DIMENSIONS = [\"pricing\", \"security\", \"integrations\", \"usability\", \"support\", \"compliance\"]",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The six-dimension CRM comparison output is saved to `/root/task/output/comparison.json`.",
+                "quote": "Save the comparison data to `/root/task/output/comparison.json`.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The final CRM comparison output must conform to `schemas/output_schema.json`.",
+                "quote": "The final output must conform to `schemas/output_schema.json`.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "Each CRM comparison row includes `dimension`, `crm_a`, `crm_b`, `winner`, and `sources` with the stated meanings.",
+                "quote": "For every covered dimension include:\n- `dimension`: the comparison dimension name.\n- `crm_a`: a concise, evidence-grounded summary for Salesforce.\n- `crm_b`: a concise, evidence-grounded summary for HubSpot.\n- `winner`: one of `salesforce`, `hubspot`, `tie`, or `insufficient_evidence`.\n- `sources`: source IDs or citation keys supporting the row.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The missing-value policy module is `/root/task/missingness_policy.py`.",
+                "quote": "The missing-value behavior is centralized in `/root/task/missingness_policy.py`",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The comparison matrix output path is `/root/task/output/comparison_matrix.json`.",
+                "quote": "Save the matrix to `/root/task/output/comparison_matrix.json`.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The missing-value policy keeps unavailable dimensions explicitly unavailable instead of turning them into numeric zeroes.",
+                "quote": "fix that policy so unavailable dimensions remain explicitly unavailable instead of becoming numeric zeroes in the comparison matrix.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The matrix grounding artifacts are `source_url_index.json`, `evidence_index.json`, `references.bib`, `schemas/output_schema.json`, `provenance.py`, and `source_quality.py`.",
+                "quote": "Grounding artifacts are provided in `source_url_index.json`, `evidence_index.json`, `references.bib`, `schemas/output_schema.json`, `provenance.py`, and `source_quality.py`.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The indexed HubSpot security candidate is a HubSpot FAQ noting reliance on AWS certifications rather than HubSpot itself holding ISO 27001.",
+                "quote": "HubSpot FAQ noting reliance on AWS certifications rather than HubSpot itself holding ISO 27001.",
+                "episode": "learning-01"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "statistical-claim-review",
+        "situation": "When the user asks for a structured review of statistical claims, the user wants independent, source-grounded assessments and complete corrections that meet the stated content constraints, along with a runnable generator that preserves the saved review, because the review should be reliable and reproducible.",
+        "queries": [
+          "# Task: Evaluate five statistical claims for misleading framing"
+        ],
+        "intents": [
+          {
+            "id": "evidence-grounded-claim-reviews",
+            "intent_explanation": "For structured statistical claim reviews delivered with a runnable generator and saved artifact, the user wants independent assessments grounded in each claim and relevant sources, with complete corrections that meet the stated content constraints. Rerunning the generator should preserve the complete review rather than replace it with heuristic or placeholder output.",
+            "requirements": [
+              "Assess each claim independently and ground its label and correction in the claim text and relevant source context, avoiding shortcut classification.",
+              "Give each review the fields named in facts.",
+              "Save the structured review at the user-stated output path and follow the referenced output schema.",
+              "Keep the runnable review generator aligned with the saved artifact so rerunning it regenerates every requested claim review with substantive labels and corrections, rather than replacing them with placeholder or heuristic output; the command in facts must regenerate the artifact.",
+              "Ensure each claim’s correction includes the terms listed for its ID in facts, ignoring case."
+            ],
+            "facts": [
+              {
+                "fact": "The requested review fields are `id`, `label`, and `correction`.",
+                "quote": "each review needs an id, a label, and a correction",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The structured review output path is `/root/task/output/claim_review.json`.",
+                "quote": "Save the structured review to `/root/task/output/claim_review.json`.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The JSON output field structure is documented by the starter pipeline and `schemas/output_schema.json`.",
+                "quote": "Follow the field structure documented by the starter pipeline and `schemas/output_schema.json` when the output is JSON.",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "Running `python claim_audit.py` must regenerate `output/claim_review.json`.",
+                "quote": "Running python claim_audit.py must regenerate output/claim_review.json",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "Each claim review correction must include these terms, ignoring case: CL1 requires absolute, base, and market; CL2 requires sample and methods; CL3 requires inflation and baseline; CL4 requires comparator and pool; CL5 requires window and historical.",
+                "quote": "Each review’s correction must include these terms, ignoring case: CL1 requires absolute, base, and market; CL2 requires sample and methods; CL3 requires inflation and baseline; CL4 requires comparator and pool; CL5 requires window and historical.",
+                "episode": "learning-01"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "history": [
+    {
+      "role": "user",
+      "content": "# Task: Build a multi-dimension comparison table\n\nThe task files are in `/root/task`.\n\nCompare the two CRM platforms across all relevant dimensions and support each dimension with source evidence.\nThe starter matrix under-covers dimensions and cites too sparsely.\n\nSave the comparison data to `/root/task/output/comparison.json`.\n\nGrounding artifacts are provided in `source_url_index.json`, `evidence_index.json`, `references.bib`, `schemas/output_schema.json`, `provenance.py`, and `source_quality.py`. Use these files to keep the answer source-grounded rather than relying on synthetic article bodies.\n\nThe comparison must retain at least the six relevant dimensions in `dimension_registry.py` and carry those dimensions through to `/root/task/output/comparison.json`, with source evidence for each dimension. The final output must conform to `schemas/output_schema.json`.\n\nEach row in `output/comparison.json` must compare both CRM products, not only list a dimension and citations. For every covered dimension include:\n- `dimension`: the comparison dimension name.\n- `crm_a`: a concise, evidence-grounded summary for Salesforce.\n- `crm_b`: a concise, evidence-grounded summary for HubSpot.\n- `winner`: one of `salesforce`, `hubspot`, `tie`, or `insufficient_evidence`.\n- `sources`: source IDs or citation keys supporting the row.\n\nAt least six rows must populate `crm_a`, `crm_b`, and `winner` so the table is a true side-by-side comparison with a defensible choice per dimension.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "Created `/root/task/output/comparison.json` with six side-by-side dimensions: pricing, security, integrations, usability, support, and compliance.\n\nEach row includes `crm_a`, `crm_b`, a winner, 2–5 source IDs, rationale, and provenance URLs. All 12 supplied sources are cited. Schema constraints, registry coverage, complete rows, source IDs, and provenance URLs all passed validation. Support is marked `insufficient_evidence` because the supplied notes contain no concrete support findings."
+    },
+    {
+      "role": "user",
+      "content": "The saved JSON has six complete rows, but comparison_pipeline.py is unchanged, so rerunning it overwrites the comparison with only four partial rows. I can’t use it reliably like this. Can you provide the complete updated deliverable?"
+    },
+    {
+      "role": "assistant",
+      "content": "Updated the deliverable so it is reproducible:\n\n- `comparison_pipeline.py` now generates all six complete comparison rows, derives provenance from the source manifest, and validates dimensions, winners, source IDs, vendor coverage, and provenance consistency.\n- `output/comparison.json` was regenerated from the pipeline.\n\nVerified that `python comparison_pipeline.py` passes, produces schema-compatible JSON, uses all 12 sources, and yields identical output across consecutive runs."
+    },
+    {
+      "role": "user",
+      "content": "# Task: Evaluate five statistical claims for misleading framing\n\nThe task files are in `/root/task`.\n\nReview each claim independently, identify misleading framing, and provide a corrected explanation.\nThe starter only flags percentage-heavy claims and misses the other failure modes.\n\nSave the structured review to `/root/task/output/claim_review.json`.\nOutput contract: write `/root/task/output/claim_review.json`. Follow the field structure documented by the starter pipeline and `schemas/output_schema.json` when the output is JSON.\n\nRequired behavior: Review all five claims independently; each review needs an id, a label, and a correction grounded in the claim text and source context rather than shortcut labels.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "Created `/root/task/output/claim_review.json` with independent reviews for all five claims, covering:\n\n- `CL1`: funding growth does not establish maturity or low risk\n- `CL2`: invalid NPS ratio and unsupported satisfaction benchmark\n- `CL3`: nominal/one-off cost reduction versus structural efficiency\n- `CL4`: self-selected comparison set\n- `CL5`: aggregate uptime masking incident severity and scope\n\nVerified JSON parsing, required fields, and that `CL1`–`CL5` each appear exactly once. The schema validator package was unavailable, so equivalent structural checks were used."
+    },
+    {
+      "role": "user",
+      "content": "The saved review has substantive explanations and independent judgments for all five claims, but rerunning the unchanged starter would overwrite those explanations with “Needs more context.” and replace some of the judgments. I’d lose the useful review when I run it again. Can you provide the complete updated deliverable?"
+    },
+    {
+      "role": "assistant",
+      "content": "Updated `/root/task/claim_audit.py` to replace the percentage heuristic and placeholder corrections with a validated, evidence-grounded review for each claim. Rerunning the starter now preserves and regenerates the complete CL1–CL5 deliverable at `/root/task/output/claim_review.json`.\n\nVerified two consecutive runs produce identical output, all five IDs appear exactly once, and every review has a non-empty `label` and substantive `correction` with no `\"Needs more context.\"` text."
+    },
+    {
+      "role": "user",
+      "content": "Running python claim_audit.py must regenerate output/claim_review.json; editing only the saved output is insufficient. Each review’s correction must include these terms, ignoring case: CL1 requires absolute, base, and market; CL2 requires sample and methods; CL3 requires inflation and baseline; CL4 requires comparator and pool; CL5 requires window and historical.\n\nCan you provide the complete updated deliverable?"
+    },
+    {
+      "role": "assistant",
+      "content": "Updated `/root/task/claim_audit.py` and regenerated `/root/task/output/claim_review.json`.\n\nRunning `cd /root/task && python claim_audit.py` now creates all five reviews. Verified every required term case-insensitively:\n\n- `CL1`: absolute, base, market\n- `CL2`: sample, methods\n- `CL3`: inflation, baseline\n- `CL4`: comparator, pool\n- `CL5`: window, historical\n\nA second run produced byte-identical output."
+    },
+    {
+      "role": "user",
+      "content": "# Task: Compare platforms without turning missing data into zeros\n\nThe task files are in `/root/task`.\n\nBuild a comparison matrix and mark unavailable dimensions honestly.\nThe starter treats missing fields as zero-like values and biases the result.\n\nSave the matrix to `/root/task/output/comparison_matrix.json`.\n\nGrounding artifacts are provided in `source_url_index.json`, `evidence_index.json`, `references.bib`, `schemas/output_schema.json`, `provenance.py`, and `source_quality.py`. Use these files to keep the answer source-grounded rather than relying on synthetic article bodies.\n\nThe missing-value behavior is centralized in `/root/task/missingness_policy.py`; fix that policy so unavailable dimensions remain explicitly unavailable instead of becoming numeric zeroes in the comparison matrix.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "Fixed `/root/task/missingness_policy.py` so `None`, blank strings, and `NaN` stay missing; genuine `0` values remain `0`. Updated `/root/task/matrix_pipeline.py` to generate a source-grounded matrix with explicit availability metadata and provenance.\n\nSaved `/root/task/output/comparison_matrix.json`. Security and marketplace scale are documented with source IDs; FedRAMP is explicitly `\"unavailable\"` for both platforms because no indexed source supports it.\n\nVerified with Python compilation, JSON parsing, missing-policy assertions, and source-ID/provenance integrity checks."
+    },
+    {
+      "role": "user",
+      "content": "I can’t use the security comparison yet: the generator treats HubSpot’s related hosting source as a documented security result, hiding the missing evidence the matrix should preserve. Please provide the complete updated deliverable."
+    },
+    {
+      "role": "assistant",
+      "content": "Updated the complete deliverable at `/root/task/output/comparison_matrix.json`.\n\nHubSpot security now reports `\"unavailable\"` with a null cell value and no supporting source IDs. C05 is retained only under `related_source_ids`/`related_evidence` as hosting context, with an explicit reason that it does not establish HubSpot’s security certification or controls.\n\nRegenerated `/root/task/matrix_pipeline.py` and verified JSON parsing, missing-value behavior, source provenance, and all matrix integrity checks."
+    }
+  ],
+  "queries": [
+    {
+      "lane": "new_task",
+      "request": "按文件夹里的资料比较这两家CRM，做成对照表，没找到依据的地方留出来。",
+      "expect_selected": [
+        "reproducible-crm-comparisons"
+      ],
+      "note": "选择比较情境；证据不足保持缺失，不把相关资料当成该维度的证明。"
+    },
+    {
+      "lane": "new_task",
+      "request": "对照表已经补好了，但运行生成脚本又变回旧版了。帮我把这件事修完整。",
+      "expect_selected": [
+        "reproducible-crm-comparisons"
+      ],
+      "note": "匹配可再生成交付要求，修生产程序并核对重跑输出。"
+    },
+    {
+      "lane": "new_task",
+      "request": "把这个JSON原样缩进成两格，字段和值都别改。",
+      "expect_selected": [],
+      "note": "纯格式化不应要求重做CRM对比或统计论证。"
+    },
+    {
+      "lane": "session",
+      "request": "按文件夹里的资料比较这两家CRM，做成对照表，没找到依据的地方留出来。",
+      "expect_selected": [
+        "reproducible-crm-comparisons"
+      ],
+      "note": "建立比较任务。"
+    },
+    {
+      "lane": "session",
+      "request": "不能只改那份结果，重新跑脚本也得生成同样的内容。",
+      "expect_selected": [
+        "reproducible-crm-comparisons"
+      ],
+      "note": "保留原任务，要求生成程序与交付一致。"
+    },
+    {
+      "lane": "session",
+      "request": "比较表先到这里。另帮我审一下这五条统计结论，逐条看看有没有误导。",
+      "expect_selected": [
+        "evidence-grounded-claim-reviews"
+      ],
+      "note": "新任务切换到statistical-claim-review；不继续套用CRM字段和旧文件路径。"
+    }
+  ]
+}

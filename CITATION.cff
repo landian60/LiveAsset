@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use LiveAsset, please cite the technical report below."
+type: article
+title: "LiveAsset: Learning Intent Assets from Corrective Interactions for Agent Runtime Control"
+authors:
+  - family-names: Liu
+    given-names: Guanming
+  - family-names: Wang
+    given-names: Weihang
+  - family-names: Zhang
+    given-names: Peng
+  - family-names: Wu
+    given-names: Meng
+  - family-names: Tu
+    given-names: Kainan
+  - family-names: Liu
+    given-names: Jiahao
+  - family-names: Zhang
+    given-names: Yu
+  - family-names: Zhang
+    given-names: Liuxin
+  - family-names: Wang
+    given-names: Qianying
+  - family-names: Gu
+    given-names: Ning
+  - family-names: Lu
+    given-names: Tun
+year: 2026
+journal: "arXiv preprint"
+url: "https://arxiv.org/abs/2611.11560"
+doi: 10.48550/arXiv.2611.11560
+repository-code: "https://github.com/landian60/LiveAsset"
+license: MIT

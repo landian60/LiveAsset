@@ -1,0 +1,126 @@
+{
+  "id": "perma-group-chat",
+  "benchmark": "PERMA",
+  "focus": "Three deliveries narrow one wording preference: formal, courteous and brief, then routine rather than consequential.",
+  "asset": {
+    "schema_version": "liveasset-situated-v2",
+    "asset_id": "liveasset-SD-Messaging-task-3",
+    "owner_id": "SD-Messaging-task-3",
+    "revision": 3,
+    "situations": [
+      {
+        "id": "group-chat-break",
+        "situation": "When the user asks for advice on handling a sensitive interpersonal situation, the user wants brief, courteous guidance that makes their action feel routine and temporary, because they want to avoid upsetting others or disrupting the conversation.",
+        "queries": [
+          "Hey, I'm in a group chat and I need to mute or leave it for a bit without upsetting anyone. What's the best way to handle this?"
+        ],
+        "intents": [
+          {
+            "id": "courteous-group-chat-break",
+            "intent_explanation": "For advice or suggested wording about stepping away from a group chat, help the user do so tactfully. Keep messages formal, courteous, and brief, while making the break sound routine and temporary so it does not feel consequential or disrupt the conversation.",
+            "requirements": [
+              "When suggesting messages for muting or temporarily leaving a group chat, keep the wording formal, courteous, brief, and professional, and make the break sound routine and temporary.",
+              "Offer guidance that helps the user step away without disrupting the conversation or making group members feel slighted."
+            ],
+            "facts": [
+              {
+                "fact": "The user wants suggested wording to be “more formal while keeping it courteous and brief”.",
+                "quote": "more formal while keeping it courteous and brief",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants to “mute or leave it for a bit without upsetting anyone”.",
+                "quote": "mute or leave it for a bit without upsetting anyone",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants both messages to feel “routine and temporary, while keeping them professional”.",
+                "quote": "routine and temporary, while keeping them professional",
+                "episode": "learning-01"
+              },
+              {
+                "fact": "The user wants to step back “without disrupting the conversation or making anyone feel slighted”.",
+                "quote": "without disrupting the conversation or making anyone feel slighted",
+                "episode": "learning-01"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "history": [
+    {
+      "role": "user",
+      "content": "Hey, I'm in a group chat and I need to mute or leave it for a bit without upsetting anyone. What's the best way to handle this?"
+    },
+    {
+      "role": "assistant",
+      "content": "Muting is usually the easiest way to get some space without making it a big moment. You don’t need to announce it, and you can check in whenever you feel like it.\n\nIf people might expect quick replies, send:\n“Taking a little break from notifications, so I may be quiet here for a bit. DM me if you need me!”\n\nIf you’d rather leave, keep it warm and brief:\n“I’m cutting back on group chats for a while, so I’m going to step out. I’ve enjoyed keeping up with you all—let’s stay in touch!”\n\nYou can be considerate without giving a long explanation or asking permission."
+    },
+    {
+      "role": "user",
+      "content": "The suggested messages are a bit too casual for me, particularly “DM me if you need me!” Could you make the wording more formal while keeping it courteous and brief?"
+    },
+    {
+      "role": "assistant",
+      "content": "For muting:\n“I’ll be taking a short break from group notifications and may be slower to respond. Please contact me directly if anything requires my attention.”\n\nFor leaving:\n“I’ll be stepping away from the group for a while. Thank you for your understanding, and I look forward to staying in touch.”"
+    },
+    {
+      "role": "user",
+      "content": "“If anything requires my attention” makes this sound more consequential than a short break. Could you make both messages feel routine and temporary, while keeping them professional, so I can step back without disrupting the conversation or making anyone feel slighted?"
+    },
+    {
+      "role": "assistant",
+      "content": "**For muting:**  \n“I’ll be muting notifications for a little while, so I may be slower to reply. I’ll catch up when I can.”\n\n**For leaving temporarily:**  \n“I’m taking a short break from group chats, so I’ll step out for now. I look forward to catching up when I return.”"
+    }
+  ],
+  "queries": [
+    {
+      "lane": "new_task",
+      "request": "I'm going to mute the project group for a few days. Can you help me leave a short message so nobody takes it personally?",
+      "expect_selected": [
+        "courteous-group-chat-break"
+      ],
+      "note": "复用礼貌、专业、简短且临时的措辞要求。"
+    },
+    {
+      "lane": "new_task",
+      "request": "项目群这两天消息太多了，我想先静音几天，帮我留句话。",
+      "expect_selected": [
+        "courteous-group-chat-break"
+      ],
+      "note": "跨语言识别同一沟通情境，不必让用户再次列出语气偏好。"
+    },
+    {
+      "lane": "new_task",
+      "request": "解释一下消息队列里的consumer group是怎么分配分区的。",
+      "expect_selected": [],
+      "note": "群组词汇相似，但技术解释不适用社交措辞规范。"
+    },
+    {
+      "lane": "session",
+      "request": "项目群这两天消息太多了，我想先静音几天，帮我留句话。",
+      "expect_selected": [
+        "courteous-group-chat-break"
+      ],
+      "note": "新建沟通任务并匹配。"
+    },
+    {
+      "lane": "session",
+      "request": "再短一点，一句话就行。",
+      "expect_selected": [
+        "courteous-group-chat-break"
+      ],
+      "note": "短续接保留任务目标和语气要求。"
+    },
+    {
+      "lane": "session",
+      "request": "这是朋友群，这次随意一点就好，不用那么正式。",
+      "expect_selected": [
+        "courteous-group-chat-break"
+      ],
+      "note": "当前明确要求优先；可保留情境，但不得坚持旧的正式语气，也不得自动改写永久偏好。"
+    }
+  ]
+}

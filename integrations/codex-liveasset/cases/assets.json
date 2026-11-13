@@ -1,0 +1,59 @@
+{
+  "schema_version": "liveasset-situated-v2",
+  "asset_id": "daily-cases",
+  "owner_id": "anonymous-user",
+  "revision": 1,
+  "situations": [
+    {
+      "id": "evaluation",
+      "situation": "运行或恢复一项具体的模型benchmark评估，排查执行与评分故障、汇总同一运行的可比结果。适用于实际评估操作，不适用于仅引用评估结果写周报或撰写论文。",
+      "queries": [],
+      "practices": [],
+      "intents": [
+        {
+          "id": "evaluation-evidence",
+          "intent_explanation": "用户需要区分模型表现、基础设施故障和评分故障，并保持同一评估范围。",
+          "requirements": [
+            "保留当前运行的题目范围和固定预算；质量低分不能通过反复重跑覆盖。",
+            "区分执行故障与评分故障；已有可用产物时先核对评分器实际读到的文件。"
+          ],
+          "facts": []
+        }
+      ]
+    },
+    {
+      "id": "repository-layout",
+      "situation": "整理远程benchmark代码、配置和运行产物的位置，要求每个benchmark在各自实际代码仓库内管理，不合并成一个总仓库。",
+      "queries": [],
+      "practices": [],
+      "intents": [
+        {
+          "id": "repository-cohesion",
+          "intent_explanation": "用户要保持各个远程benchmark自身的代码、配置、执行记录和结果在一起。",
+          "requirements": [
+            "在每个benchmark自己的实际代码仓库中整理配置和结果。",
+            "核对入口实际输出路径，区别已迁移的旧结果与以后运行的默认路径。"
+          ],
+          "facts": []
+        }
+      ]
+    },
+    {
+      "id": "weekly-report",
+      "situation": "撰写、修改或解释技术工作周报中的进展与评估指标，按当前报告周期核对事实，简短进展与深入解释采用对应粒度。",
+      "queries": [],
+      "practices": [],
+      "intents": [
+        {
+          "id": "weekly-evidence",
+          "intent_explanation": "用户需要简洁、可追溯的当期技术周报，避免把复评一致性说成准确性。",
+          "requirements": [
+            "只使用属于当前报告周期的事实；历史记录只作有时间范围的参考。",
+            "复评一致性与相对独立真值的准确性分别表述；短句只补当前请求需要的信息。"
+          ],
+          "facts": []
+        }
+      ]
+    }
+  ]
+}

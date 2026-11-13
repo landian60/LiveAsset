@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${PLUGIN_ROOT}/scripts/run.sh\" hook",
+            "timeout": 600,
+            "statusMessage": "Matching LiveAsset contextual intents"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${PLUGIN_ROOT}/scripts/run.sh\" hook",
+            "timeout": 600,
+            "statusMessage": "Checking LiveAsset intents"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${PLUGIN_ROOT}/scripts/run.sh\" hook",
+            "timeout": 600,
+            "statusMessage": "Matching LiveAsset contextual intents"
+          }
+        ]
+      }
+    ]
+  }
+}

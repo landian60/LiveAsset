@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "liveasset": {
+      "command": "bash",
+      "args": ["${PLUGIN_ROOT}/scripts/run.sh", "mcp"]
+    }
+  }
+}

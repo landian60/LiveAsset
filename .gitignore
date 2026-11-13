@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.DS_Store
+.pytest_cache/
+.env
+.env.*
+api.env
+auth.json
+store/
+demo-store/
+runs/
+*.log
+
+# Personal runtime state belongs outside the source checkout.
+asset.json
+learned.json
+routing.json
+model-calls/
+checks/
+learning/
+sessions/
+asset-snapshots/

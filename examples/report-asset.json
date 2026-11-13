@@ -1,0 +1,32 @@
+{
+  "schema_version": "liveasset-situated-v2",
+  "asset_id": "synthetic-report-example",
+  "owner_id": "example-user",
+  "revision": 1,
+  "situations": [
+    {
+      "id": "weekly-report",
+      "situation": "When writing a weekly work report about review results, the user wants the measured progress and metric meanings reported accurately.",
+      "queries": [],
+      "practices": [],
+      "intents": [
+        {
+          "id": "report-counts",
+          "intent_explanation": "When a report gives a measured rate, the user wants the counts behind it so the size of the result is clear.",
+          "requirements": [
+            "State the numerator and denominator alongside a reported rate when those counts are available."
+          ],
+          "facts": []
+        },
+        {
+          "id": "metric-meaning",
+          "intent_explanation": "When a report summarizes agreement between reviewers, the user wants its meaning preserved so agreement is not mistaken for correctness.",
+          "requirements": [
+            "Describe reviewer agreement as agreement; claim accuracy only when an independent correctness reference supports it."
+          ],
+          "facts": []
+        }
+      ]
+    }
+  ]
+}

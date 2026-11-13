@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/landian60/LiveAsset/blob/main/schema/asset.schema.json",
+  "title": "LiveAsset situated intent asset (v2)",
+  "description": "Structure accepted by validate_asset() in src/liveasset/situated_intents.py. IDs are unique across all situations and intents in one asset; a JSON Schema cannot express that cross-level constraint, so validate_asset() enforces it at runtime.",
+  "type": "object",
+  "required": ["schema_version", "asset_id", "owner_id", "revision", "situations"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "liveasset-situated-v2" },
+    "asset_id": { "type": "string", "minLength": 1 },
+    "owner_id": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "situations": { "type": "array", "items": { "$ref": "#/$defs/situation" } }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$",
+      "description": "Stable identifier, unique across every situation and intent in the asset."
+    },
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "situation": {
+      "type": "object",
+      "required": ["id", "situation", "queries", "intents"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "situation": {
+          "allOf": [{ "$ref": "#/$defs/nonEmptyString" }],
+          "description": "Request-level description of this recurring kind of work. Read by the matcher at task entry."
+        },
+        "queries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "description": "Requests associated with the situation during learning; stored as openings of up to 300 characters."
+        },
+        "intents": { "type": "array", "items": { "$ref": "#/$defs/intent" } },
+        "practices": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "default": [],
+          "description": "Retained situation-level field. Earlier v2 assets may omit it; validate_asset() normalizes it to [] in the in-memory copy."
+        }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "required": ["id", "intent_explanation", "requirements", "facts"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "intent_explanation": {
+          "allOf": [{ "$ref": "#/$defs/nonEmptyString" }],
+          "description": "When and why the user wants these requirements. Read by matching, injection, and the checker to judge applicability."
+        },
+        "requirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "description": "Individually checkable expectations. Put applicability conditions in the text."
+        },
+        "facts": { "type": "array", "items": { "$ref": "#/$defs/fact" } }
+      }
+    },
+    "fact": {
+      "type": "object",
+      "required": ["fact", "quote", "episode"],
+      "additionalProperties": false,
+      "properties": {
+        "fact": { "type": "string", "description": "Historical information supplied by the user or visible material." },
+        "quote": { "type": "string", "description": "Exact supporting quotation from a user message or tool result." },
+        "episode": { "type": "string", "description": "Identifier of the learning episode that produced the fact." },
+        "scope": {
+          "enum": ["user", "task"],
+          "description": "Preserved from earlier v2 assets. It is not an implemented pre-injection filter; the checker judges applicability from the current result."
+        }
+      }
+    }
+  }
+}

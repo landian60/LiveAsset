@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "purpose": "自然表达的匿名工程样例；人工固定资产；无新增学习；预期仅由测试程序读取。",
+  "cases": [
+    {
+      "id": "weekly-dialogue",
+      "kind": "derived_composite",
+      "basis": "周报聊天中的新周期、压缩表述和指标追问；匿名改写并组合顺序，不是历史原文重放。",
+      "steps": [
+        {
+          "id": "first",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "weekly-a",
+            "turn_id": "w1",
+            "prompt": "帮我写一下这周周报。材料：这周补了6道Office评测题，grader做了两轮复评，48条判断里有47条一致。写两点就行。"
+          },
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "shorten",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "weekly-a",
+            "turn_id": "w2",
+            "prompt": "第二点还是太长了，压成一句，数字保留。"
+          },
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "same_task_as": "first"
+          }
+        },
+        {
+          "id": "explain",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "weekly-a",
+            "turn_id": "w3",
+            "prompt": "47/48这个到底说明什么？评分准不准能看出来吗？"
+          },
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "same_task_as": "first"
+          }
+        },
+        {
+          "id": "next-week",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "weekly-a",
+            "turn_id": "w4",
+            "prompt": "又到写周报的时候了。这周新增8道题，还做了第一轮人工复核，沿用上次两点的格式。"
+          },
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "different_task_from": "first"
+          }
+        },
+        {
+          "id": "fresh-chat",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "weekly-b",
+            "turn_id": "w5",
+            "prompt": "帮我写本周工作周报：完成8道Office题的复核，修正了两处重复扣分。简短一点。"
+          },
+          "expect": {
+            "selected": [
+              "weekly-evidence"
+            ],
+            "different_task_from": "next-week"
+          }
+        }
+      ]
+    },
+    {
+      "id": "handoff-context",
+      "kind": "synthetic",
+      "basis": "人工组合评估与目录整理情境；新要求只出现在工具返回材料中，用户没有要求重新匹配。",
+      "steps": [
+        {
+          "id": "request",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "handoff-a",
+            "turn_id": "h1",
+            "prompt": "帮我把交接里剩下的事情处理一下，先看handoff.md。"
+          },
+          "expect": {
+            "selected": [],
+            "action": "new_task"
+          }
+        },
+        {
+          "id": "read-handoff",
+          "event": {
+            "hook_event_name": "PostToolUse",
+            "session_id": "handoff-a",
+            "turn_id": "h1",
+            "tool_use_id": "read-handoff",
+            "tool_name": "Bash",
+            "tool_input": {
+              "command": "cat handoff.md"
+            },
+            "tool_response": "模型评测交接：本批固定40题，执行已结束。3题有产物但judge报找不到输入。先核对提交目录和评分器读取路径，汇总这批结果；不重新生成已有产物。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "same_task_as": "request",
+            "additional_context": true
+          }
+        },
+        {
+          "id": "read-layout",
+          "event": {
+            "hook_event_name": "PostToolUse",
+            "session_id": "handoff-a",
+            "turn_id": "h1",
+            "tool_use_id": "read-layout",
+            "tool_name": "Bash",
+            "tool_input": {
+              "command": "cat layout.md"
+            },
+            "tool_response": "本批评测的另一项交接：两个benchmark的配置和结果散落在临时目录。需要分别整理回各自实际代码仓库，并核对下一次运行的默认输出位置。旧结果保持可访问。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "same_task_as": "request",
+            "additional_context": true
+          }
+        },
+        {
+          "id": "same-tool-result",
+          "event": {
+            "hook_event_name": "PostToolUse",
+            "session_id": "handoff-a",
+            "turn_id": "h1",
+            "tool_use_id": "read-layout",
+            "tool_name": "Bash",
+            "tool_input": {
+              "command": "cat layout.md"
+            },
+            "tool_response": "本批评测的另一项交接：两个benchmark的配置和结果散落在临时目录。需要分别整理回各自实际代码仓库，并核对下一次运行的默认输出位置。旧结果保持可访问。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "same_task_as": "request",
+            "additional_context": false
+          }
+        },
+        {
+          "id": "continue",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "handoff-a",
+            "turn_id": "h2",
+            "prompt": "继续吧。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "same_task_as": "request",
+            "action": "reused"
+          }
+        }
+      ]
+    },
+    {
+      "id": "layout-correction-dialogue",
+      "kind": "derived_composite",
+      "basis": "远程评估目录整理聊天中的各自仓库纠正，替换主机和路径；最后一句是人工构造的目标切换。",
+      "steps": [
+        {
+          "id": "layout",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "layout-a",
+            "turn_id": "l1",
+            "prompt": "远程那几个benchmark的目录帮我整理一下，代码、配置、结果现在太散了。"
+          },
+          "expect": {
+            "selected": [
+              "repository-cohesion"
+            ]
+          }
+        },
+        {
+          "id": "correct",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "layout-a",
+            "turn_id": "l2",
+            "prompt": "不是合成一个总仓库，每个都放回它自己的代码仓库。旧路径先保留，别把正在跑的任务弄断了。"
+          },
+          "expect": {
+            "selected": [
+              "repository-cohesion"
+            ],
+            "same_task_as": "layout"
+          }
+        },
+        {
+          "id": "switch",
+          "event": {
+            "hook_event_name": "UserPromptSubmit",
+            "session_id": "layout-a",
+            "turn_id": "l3",
+            "prompt": "先到这里。把“这批结果还需要复核”翻成英文，我发给同事。"
+          },
+          "expect": {
+            "selected": [],
+            "different_task_from": "layout"
+          }
+        }
+      ]
+    },
+    {
+      "id": "continuation-scope",
+      "kind": "synthetic",
+      "steps": [
+        {
+          "id": "start",
+          "event": {
+            "session_id": "continuation-scope",
+            "cwd": "anonymous-workspace",
+            "hook_event_name": "UserPromptSubmit",
+            "turn_id": "start",
+            "prompt": "接着处理这批40题的评估，先看交接材料。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "action": "new_task",
+            "additional_context": true
+          }
+        },
+        {
+          "id": "read-handoff",
+          "event": {
+            "session_id": "continuation-scope",
+            "cwd": "anonymous-workspace",
+            "hook_event_name": "PostToolUse",
+            "turn_id": "start",
+            "tool_use_id": "read-handoff",
+            "tool_name": "Bash",
+            "tool_input": {
+              "command": "cat handoff.md"
+            },
+            "tool_response": "本批固定40题，38题已有评分，另2题已有产物但评分器找不到输入文件。还有目录整理待办：两个benchmark的配置、执行记录和结果需分别归回各自代码仓库，旧产物路径仍需可访问。两项工作均待处理。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "same_task_as": "start",
+            "additional_context": true
+          }
+        },
+        {
+          "id": "continue",
+          "event": {
+            "session_id": "continuation-scope",
+            "cwd": "anonymous-workspace",
+            "hook_event_name": "UserPromptSubmit",
+            "turn_id": "continue",
+            "prompt": "继续吧，已经完成的别再跑。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence",
+              "repository-cohesion"
+            ],
+            "same_task_as": "start"
+          }
+        },
+        {
+          "id": "narrow",
+          "event": {
+            "session_id": "continuation-scope",
+            "cwd": "anonymous-workspace",
+            "hook_event_name": "UserPromptSubmit",
+            "turn_id": "narrow",
+            "prompt": "目录先不整理了，这次只核对那两条评分记录。"
+          },
+          "expect": {
+            "selected": [
+              "evaluation-evidence"
+            ],
+            "same_task_as": "start"
+          }
+        },
+        {
+          "id": "leave",
+          "event": {
+            "session_id": "continuation-scope",
+            "cwd": "anonymous-workspace",
+            "hook_event_name": "UserPromptSubmit",
+            "turn_id": "leave",
+            "prompt": "评估先放一边，帮我把“明天见”翻译成英文。"
+          },
+          "expect": {
+            "selected": [],
+            "different_task_from": "start",
+            "additional_context": false
+          }
+        }
+      ]
+    }
+  ]
+}
